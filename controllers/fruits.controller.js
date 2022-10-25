@@ -32,3 +32,14 @@ module.exports.getASingleFruit = async(req,res,next)=>{
     next(error)
   }
 }
+
+module.exports.addAFruit = async(req,res,next)=>{
+  try {
+    const fruitCollection = getDb()
+    const fruitData = req.body
+    const insertResult = await fruitCollection.collection("fruits").insertOne(fruitData)
+    res.status(200).json({success:true,insertResult})
+  } catch (error) {
+    next(error)
+  }
+}

@@ -10,5 +10,8 @@ router
   router.route("/:id")
   .get(fruitsControllers.getASingleFruit)
 
+  router.route("/addfruit")
+  .post(fruitsControllers.addAFruit)
+
 
   module.exports = router;
