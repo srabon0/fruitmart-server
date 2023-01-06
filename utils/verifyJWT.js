@@ -1,4 +1,6 @@
-export function verifyJWT(req, res, next) {
+const jwt = require('jsonwebtoken');
+require("dotenv").config();
+function verifyJWT(req, res, next){
     const authHeader = req.headers.authorization;
     if (!authHeader) {
       return res.status(401).send({ message: "UnAuthorized access" });
@@ -12,6 +14,7 @@ export function verifyJWT(req, res, next) {
       next();
     });
   }
+module.exports =  verifyJWT
 
 
   /**

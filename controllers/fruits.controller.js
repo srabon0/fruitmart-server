@@ -20,11 +20,10 @@ module.exports.getAllFruits = async (req, res, next) => {
   }
 };
 
-module.exports.getASingleFruit = async(req,res,next)=>{
+module.exports.getASingleFruit =  async(req,res,next)=>{
   try {
     const fruitCollection = getDb()
     const fruitID =  req.params.id
-    console.log(fruitID)
     const query = {_id:ObjectId(fruitID)}
     const singleFruit = await fruitCollection.collection("fruits").findOne(query)
     res.status(200).json({ success: true, fruit: singleFruit });
