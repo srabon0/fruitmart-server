@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 require("dotenv").config();
 function verifyJWT(req, res, next){
+  console.log("middleware hit");
     const authHeader = req.headers.authorization;
     if (!authHeader) {
       return res.status(401).send({ message: "UnAuthorized access" });

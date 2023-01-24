@@ -21,6 +21,7 @@ module.exports.getAllFruits = async (req, res, next) => {
 };
 
 module.exports.getASingleFruit =  async(req,res,next)=>{
+  console.log("controller hit");
   try {
     const fruitCollection = getDb()
     const fruitID =  req.params.id

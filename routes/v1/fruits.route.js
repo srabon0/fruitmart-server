@@ -6,13 +6,11 @@ router
   .route("/")
   .get(fruitsControllers.getAllFruits)
 
-  router.use('/:id',verifyJWT)
   router.route("/:id")
   
-  .get(fruitsControllers.getASingleFruit)
+  .get(verifyJWT,fruitsControllers.getASingleFruit)
 
   router.route("/addfruit")
   .post(fruitsControllers.addAFruit)
-
 
   module.exports = router;
