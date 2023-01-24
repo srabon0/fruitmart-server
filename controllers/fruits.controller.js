@@ -32,6 +32,18 @@ module.exports.getASingleFruit =  async(req,res,next)=>{
     next(error)
   }
 }
+module.exports.deleteASingleFruit =  async(req,res,next)=>{
+  try {
+    const fruitCollection = getDb()
+    const fruitID =  req.params.id
+    const query = {_id:ObjectId(fruitID)}
+    const singleFruit = await fruitCollection.collection("fruits").deleteOne(query)
+    console.log(singleFruit);
+    res.status(200).json({ success: true, fruit: singleFruit });
+  } catch (error) {
+    next(error)
+  }
+}
 
 module.exports.addAFruit = async(req,res,next)=>{
   try {

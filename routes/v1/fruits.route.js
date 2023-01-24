@@ -9,6 +9,7 @@ router
   router.route("/:id")
   
   .get(verifyJWT,fruitsControllers.getASingleFruit)
+  .delete(verifyJWT,fruitsControllers.deleteASingleFruit)
 
   router.route("/addfruit")
   .post(fruitsControllers.addAFruit)
