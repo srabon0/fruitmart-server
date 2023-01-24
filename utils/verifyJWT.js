@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 require("dotenv").config();
 function verifyJWT(req, res, next){
-  console.log("middleware hit");
+  console.log(req.headers)
     const authHeader = req.headers.authorization;
     if (!authHeader) {
       return res.status(401).send({ message: "UnAuthorized access" });
@@ -20,4 +20,6 @@ module.exports =  verifyJWT
 
   /**
    * NOW we will destroy the token and verify route access
+   * THIS IS THE FUNCTION THAT VERSFIES A ACCESS TOKEN
+   * WE EXPORT THIS FUNCTION TO FRUIT ROUTE
    */

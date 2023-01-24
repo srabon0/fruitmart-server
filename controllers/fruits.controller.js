@@ -21,12 +21,12 @@ module.exports.getAllFruits = async (req, res, next) => {
 };
 
 module.exports.getASingleFruit =  async(req,res,next)=>{
-  console.log("controller hit");
   try {
     const fruitCollection = getDb()
     const fruitID =  req.params.id
     const query = {_id:ObjectId(fruitID)}
     const singleFruit = await fruitCollection.collection("fruits").findOne(query)
+    console.log(singleFruit);
     res.status(200).json({ success: true, fruit: singleFruit });
   } catch (error) {
     next(error)
