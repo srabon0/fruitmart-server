@@ -20,9 +20,15 @@ module.exports.validateUser = async(req,res,next)=>{
 
 module.exports.checkUserAdmin =  async(req,res,next)=>{
   try {
-    const adminEmail =req.params.email
-    console.log("admin email",adminEmail);
-    res.send({isAdmin:"Admin"})
+    const db=getDb()
+    const query = {email:req.params.email}
+    const result = await db.collection('users').findOne(query)
+    if(result.role=='Admin'){
+      res.send({isAdmin:"Admin"})
+    } else{
+      res.send({isAdmin:false})
+    }
+   
     
   } catch (error) {
     next(error);
