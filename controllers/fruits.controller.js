@@ -38,8 +38,7 @@ module.exports.deleteASingleFruit =  async(req,res,next)=>{
     const fruitID =  req.params.id
     const query = {_id:ObjectId(fruitID)}
     const singleFruit = await fruitCollection.collection("fruits").deleteOne(query)
-    console.log(singleFruit);
-    res.status(200).json({ success: true, fruit: singleFruit });
+    res.status(200).json({ success: true, operation:singleFruit });
   } catch (error) {
     next(error)
   }
