@@ -12,7 +12,7 @@ module.exports.validateUser = async(req,res,next)=>{
       await db.collection("users").insertOne({role:"user",email:req.body.email});
     }
     const token = jwt.sign(userData,process.env.ACCESS_TOKEN_ENC_KEY);
-    res.status(200).json({success:true,token:token })  
+    res.status(200).json({success:true,token:token,currentuser:userData.email })  
   } catch (error) {
     next(error)
   }

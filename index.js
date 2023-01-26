@@ -8,7 +8,7 @@ app.use(express.json({limit: '100mb'}));
 const { connectToServer } = require("./utils/dbConnect");
 const fruitsRoutes = require("./routes/v1/fruits.route");
 const userControl = require("./routes/v1/user.route");
-
+const orderRoutes = require('./routes/v1/orders.route')
 connectToServer((err) => {
   if (!err) {
     app.listen(port, () => {
@@ -21,6 +21,7 @@ connectToServer((err) => {
 
 app.use("/api/v1/fruits", fruitsRoutes);
 app.use("/api/v1/users", userControl);
+app.use("/api/v1/orders", orderRoutes);
 
 app.all("*", (req, res) => {
   res.send("NO route found.");
