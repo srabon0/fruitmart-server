@@ -19,14 +19,14 @@ module.exports.placeAnOrder = async(req,res,next)=>{
       const db = getDb();
   
       // cursor => toArray(), forEach()
-      const fruits = await db
+      const orders = await db
         .collection("orders")
         .find({})
         // .project({ _id: 0 })
         // .skip(+page * limit)
         // .limit(+limit)
         .toArray();
-      res.status(200).json({ success: true, fruits: fruits });
+      res.status(200).json({ success: true, orders: orders });
     } catch (error) {
       next(error);
     }
