@@ -9,4 +9,7 @@ router
 router.route("/admin/:email") 
       .get(userControllers.checkUserAdmin)
 
+router.route("/current/:email") 
+      .get(userControllers.getCurrentUserInformation)
+
   module.exports = router;

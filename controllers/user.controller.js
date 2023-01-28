@@ -35,3 +35,17 @@ module.exports.checkUserAdmin =  async(req,res,next)=>{
     
   }
 }
+
+module.exports.getCurrentUserInformation =  async(req,res,next)=>{
+  try {
+    const db=getDb()
+    const query = {email:req.params.email}
+    const result = await db.collection('users').findOne(query)
+    res.status(200).json({success:true,userdata:result})
+   
+    
+  } catch (error) {
+    next(error);
+    
+  }
+}

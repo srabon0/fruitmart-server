@@ -31,3 +31,26 @@ module.exports.placeAnOrder = async(req,res,next)=>{
       next(error);
     }
   };
+
+
+  module.exports.getUserWiseOrder = async (req, res, next) => {
+    try {
+      // const { limit, page } = req.query;
+      const email = req.params.email
+      console.log("query email ",email)
+      const db = getDb();
+      const query = {email:email}
+  
+      // cursor => toArray(), forEach()
+      const orders = await db
+        .collection("orders")
+        .find(query)
+        // .project({ _id: 0 })
+        // .skip(+page * limit)
+        // .limit(+limit)
+        .toArray();
+      res.status(200).json({ success: true, userorder: orders });
+    } catch (error) {
+      next(error);
+    }
+  };

@@ -6,6 +6,9 @@ const verifyJWT = require('../../utils/verifyJWT');
 router.route("/")
 .get(orderController.getAllOrder)
 
+router.route("/userwise/:email")
+.get(orderController.getUserWiseOrder)
+
 router.route("/place-order") 
 .post(verifyJWT,orderController.placeAnOrder)
 
