@@ -14,6 +14,9 @@ module.exports.getAllFruits = async (req, res, next) => {
       // .skip(+page * limit)
       // .limit(+limit)
       .toArray();
+      
+       fruits
+      .sort((a, b) => a.name.localeCompare(b.name))
     res.status(200).json({ success: true, fruits: fruits });
   } catch (error) {
     next(error);
