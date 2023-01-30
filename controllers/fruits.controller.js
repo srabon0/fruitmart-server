@@ -14,7 +14,6 @@ module.exports.getAllFruits = async (req, res, next) => {
       // .skip(+page * limit)
       // .limit(+limit)
       .toArray();
-      
        fruits
       .sort((a, b) => a.name.localeCompare(b.name))
     res.status(200).json({ success: true, fruits: fruits });
@@ -29,7 +28,6 @@ module.exports.getASingleFruit =  async(req,res,next)=>{
     const fruitID =  req.params.id
     const query = {_id:ObjectId(fruitID)}
     const singleFruit = await fruitCollection.collection("fruits").findOne(query)
-    console.log(singleFruit);
     res.status(200).json({ success: true, fruit: singleFruit });
   } catch (error) {
     next(error)
@@ -53,6 +51,21 @@ module.exports.addAFruit = async(req,res,next)=>{
     const fruitData = req.body
     const insertResult = await fruitCollection.collection("fruits").insertOne(fruitData)
     res.status(200).json({success:true,insertResult})
+  } catch (error) {
+    next(error)
+  }
+}
+module.exports.updateAFruit = async(req,res,next)=>{
+  try {
+    const fruitCollection = getDb()
+    const fruitId  = req.params.id
+    const query = {_id:ObjectId(fruitId)} 
+    const {name,price,inStock,picture,quantity,description,company} = req.body
+
+    console.log("receive updated data", req.body);
+    const updateResult = await fruitCollection.collection("fruits").updateOne(query,{$set:{"name":name,"price":price,"inStock":inStock,"picture":picture,"quantity":quantity,"description":description,"company":company}},{ upsert: true });
+    res.status(200).json({success:true,updateResult})
+    
   } catch (error) {
     next(error)
   }

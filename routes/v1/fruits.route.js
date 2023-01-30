@@ -13,5 +13,9 @@ router
 
   router.route("/addfruit")
   .post(fruitsControllers.addAFruit)
+  router.route("/update-fruit/:id")
+  .put(fruitsControllers.updateAFruit)
+
+ 
 
   module.exports = router;
