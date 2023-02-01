@@ -1,5 +1,7 @@
 const SSLCommerzPayment = require("sslcommerz");
-
+var uniqid = require("uniqid");
+const { ObjectId } = require("mongodb");
+const { getDb } = require("../utils/dbConnect");
 module.exports.testReq = async (req, res, next) => {
   try {
     res.send("paymentRoute is worling");
@@ -10,36 +12,54 @@ module.exports.testReq = async (req, res, next) => {
 
 module.exports.initiatePayment = async (req, res, next) => {
   try {
-    const orderId = req.params.orderid; //we sent the order id from the front end because there is some cors error that we cant access directly formt sslcommerz
-    console.log("got the order id", orderId);
+    const orderId = req.params.orderid
+    const db = getDb();
+    const query = { _id: ObjectId(orderId) };
+    const order = await db.collection("orders").findOne(query);
+    const transaction_id = uniqid();
+    const {
+      _id,
+      name,
+      email,
+      phone,
+      address,
+      item,
+      total,
+      vat,
+      shippingfee,
+      subtotal,
+      order_date,
+    } = order;
+    const products = item.map((i) => i.name).join(",");
     const data = {
-      total_amount: 100,
+      total_amount: 100,//Number(subtotal), pay 100 taka for the test cz this is ssl is not freee its premium 
       currency: "BDT",
-      tran_id: "REF123",
-      success_url: `${process.env.ROOT}/ssl-payment-success`,
-      fail_url: `${process.env.ROOT}/ssl-payment-fail`,
-      cancel_url: `${process.env.ROOT}/ssl-payment-cancel`,
+      tran_id: transaction_id,
+      success_url: `${process.env.ROOT}/payment/ssl-payment-success`,
+      fail_url: `${process.env.ROOT}/payment/ssl-payment-fail`,
+      cancel_url: `${process.env.ROOT}/payment/ssl-payment-cancel`,
       shipping_method: "No",
-      product_name: "Computer.",
-      product_category: "Electronic",
+      product_name: products,
+      product_category: "Fruit",
       product_profile: "general",
-      cus_name: "Customer Name",
-      cus_email: "cust@yahoo.com",
-      cus_add1: "Dhaka",
-      cus_add2: "Dhaka",
-      cus_city: "Dhaka",
-      cus_state: "Dhaka",
-      cus_postcode: "1000",
+      cus_name: name,
+      cus_email: email,
+      cus_add1: address,
+      cus_add2: "",
+      cus_city: "",
+      cus_state: "",
+      cus_postcode: "",
       cus_country: "Bangladesh",
-      cus_phone: "01681888025",
-      cus_fax: "01711111111",
+      cus_phone: phone,
+      cus_fax: "",
       multi_card_name: "mastercard",
       value_a: "ref001_A",
       value_b: "ref002_B",
       value_c: "ref003_C",
       value_d: "ref004_D",
-      ipn_url: `${process.env.ROOT}/ssl-payment-notification`,
+      ipn_url: `${process.env.ROOT}/payment/ssl-payment-notification`,
     };
+    // console.log("payment data", data);
 
     const sslcommerz = new SSLCommerzPayment(
       process.env.STORE_ID,
@@ -49,6 +69,7 @@ module.exports.initiatePayment = async (req, res, next) => {
     sslcommerz.init(data).then((data) => {
       //process the response that got from sslcommerz
       //https://developer.sslcommerz.com/doc/v4/#returned-parameters
+      console.log("payment operation", data)
 
       if (data?.GatewayPageURL) {
         return res.status(200).redirect(data?.GatewayPageURL);
@@ -57,6 +78,65 @@ module.exports.initiatePayment = async (req, res, next) => {
           message: "Session was not successful",
         });
       }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.paymentNotification = async (req, res, next) => {
+  /**
+   * If payment notification
+   */
+  try {
+    return res.status(200).json({
+      data: req.body,
+      message: "Payment notification",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.paymentSuccess = async (req, res, next) => {
+  /**
+   * If payment successful
+   */
+
+  try {
+    return res.status(200).json({
+      data: {...req.body,redirect:"abc"},
+      message: "Payment success",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.paymentFail = async (req, res, next) => {
+  try {
+    /**
+     * If payment failed
+     */
+
+    return res.status(200).json({
+      data: req.body,
+      message: "Payment failed",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.paymentCancel = async (req, res, next) => {
+  try {
+    /**
+     * If payment cancelled
+     */
+
+    return res.status(200).json({
+      data: req.body,
+      message: "Payment cancelled",
     });
   } catch (error) {
     next(error);

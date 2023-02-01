@@ -8,4 +8,15 @@ router.route("/")
 router.route("/ssl-request/:orderid")
 .get(paymentController.initiatePayment)
 
+router.route("/ssl-payment-notification")
+.post(paymentController.paymentNotification)
 module.exports= router
+
+router.route("/ssl-payment-success")
+.post(paymentController.paymentSuccess) //our main work will be here
+
+router.route("/ssl-payment-fail")
+.post(paymentController.paymentFail)
+
+router.route("/ssl-payment-cancel")
+.post(paymentController.paymentCancel) 
