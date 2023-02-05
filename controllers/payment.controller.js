@@ -34,7 +34,7 @@ module.exports.initiatePayment = async (req, res, next) => {
     const data = {
       total_amount: 100,//Number(subtotal), pay 100 taka for the test cz this is ssl is not freee its premium 
       currency: "BDT",
-      tran_id: transaction_id,
+      tran_id: `${transaction_id}==${_id}`,
       success_url: `${process.env.ROOT}/payment/ssl-payment-success`,
       fail_url: `${process.env.ROOT}/payment/ssl-payment-fail`,
       cancel_url: `${process.env.ROOT}/payment/ssl-payment-cancel`,
@@ -58,6 +58,8 @@ module.exports.initiatePayment = async (req, res, next) => {
       value_c: "ref003_C",
       value_d: "ref004_D",
       ipn_url: `${process.env.ROOT}/payment/ssl-payment-notification`,
+      kkkk:"dfasioidjfo sdjfkasjl",
+      dkfjaslkdo0:"djfisafoiewinnwep"
     };
     // console.log("payment data", data);
 
@@ -69,7 +71,7 @@ module.exports.initiatePayment = async (req, res, next) => {
     sslcommerz.init(data).then((data) => {
       //process the response that got from sslcommerz
       //https://developer.sslcommerz.com/doc/v4/#returned-parameters
-      console.log("payment operation", data)
+      //console.log("payment operation", data)
 
       if (data?.GatewayPageURL) {
         return res.status(200).redirect(data?.GatewayPageURL);
@@ -104,8 +106,14 @@ module.exports.paymentSuccess = async (req, res, next) => {
    */
 
   try {
+    const valid = req.body.tran_id.split("==");
+    const db = getDb()
+    const p_date = new Date().toISOString()
+    const query = {_id:ObjectId(valid[1])} 
+    await db.collection('orders').updateOne(query,{$set:{payment:'pending',transaction_id:valid[0],payment_date:p_date}},{upsert:true});
+    console.log(valid[1]);
     return res.status(200).json({
-      data: {...req.body,redirect:"abc"},
+      data: {...req.body,tran_id:valid[0]},
       message: "Payment success",
     });
   } catch (error) {
