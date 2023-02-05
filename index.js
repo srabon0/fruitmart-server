@@ -6,6 +6,7 @@ const app = express();
 app.use(cors({ origin:'http://localhost:3000' , credentials :  true}));
 app.use(express.urlencoded({extended:false}));
 app.use(express.json({limit: '100mb'}));
+app.set('view engine', 'ejs');
 const { connectToServer } = require("./utils/dbConnect");
 const fruitsRoutes = require("./routes/v1/fruits.route");
 const userControl = require("./routes/v1/user.route");

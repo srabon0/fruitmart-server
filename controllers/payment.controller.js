@@ -12,7 +12,7 @@ module.exports.testReq = async (req, res, next) => {
 
 module.exports.initiatePayment = async (req, res, next) => {
   try {
-    const orderId = req.params.orderid
+    const orderId = req.params.orderid;
     const db = getDb();
     const query = { _id: ObjectId(orderId) };
     const order = await db.collection("orders").findOne(query);
@@ -32,7 +32,7 @@ module.exports.initiatePayment = async (req, res, next) => {
     } = order;
     const products = item.map((i) => i.name).join(",");
     const data = {
-      total_amount: 100,//Number(subtotal), pay 100 taka for the test cz this is ssl is not freee its premium 
+      total_amount: 100, //Number(subtotal), pay 100 taka for the test cz this is ssl is not freee its premium
       currency: "BDT",
       tran_id: `${transaction_id}==${_id}`,
       success_url: `${process.env.ROOT}/payment/ssl-payment-success`,
@@ -58,8 +58,6 @@ module.exports.initiatePayment = async (req, res, next) => {
       value_c: "ref003_C",
       value_d: "ref004_D",
       ipn_url: `${process.env.ROOT}/payment/ssl-payment-notification`,
-      kkkk:"dfasioidjfo sdjfkasjl",
-      dkfjaslkdo0:"djfisafoiewinnwep"
     };
     // console.log("payment data", data);
 
@@ -76,9 +74,10 @@ module.exports.initiatePayment = async (req, res, next) => {
       if (data?.GatewayPageURL) {
         return res.status(200).redirect(data?.GatewayPageURL);
       } else {
-        return res.status(400).json({
-          message: "Session was not successful",
-        });
+        // return res.status(400).json({
+        //   message: "Session was not successful",
+        // });
+        return res.status(200).render("success",{ payment_data:req.body, message:"Session Was not Successfull"});
       }
     });
   } catch (error) {
@@ -107,15 +106,30 @@ module.exports.paymentSuccess = async (req, res, next) => {
 
   try {
     const valid = req.body.tran_id.split("==");
-    const db = getDb()
-    const p_date = new Date().toISOString()
-    const query = {_id:ObjectId(valid[1])} 
-    await db.collection('orders').updateOne(query,{$set:{payment:'pending',transaction_id:valid[0],payment_date:p_date}},{upsert:true});
-    console.log(valid[1]);
-    return res.status(200).json({
-      data: {...req.body,tran_id:valid[0]},
-      message: "Payment success",
-    });
+    const db = getDb();
+    const p_date = new Date().toISOString();
+    const query = { _id: ObjectId(valid[1]) };
+    await db
+      .collection("orders")
+      .updateOne(
+        query,
+        {
+          $set: {
+            payment: "pending",
+            transaction_id: valid[0],
+            payment_date: p_date,
+          },
+        },
+        { upsert: true }
+      );
+    // console.log(valid[1]);
+    const newData = {...req.body,tran_id:valid[0]}
+    // return res.status(200).json({
+    //   data: { ...req.body, tran_id: valid[0] },
+    //   message: "Payment successfull",
+    // });
+    // console.log("payemnet success",newData)
+    return res.status(200).render("success",{ payment_data:newData, message:"Your Payment is Successfull"});
   } catch (error) {
     next(error);
   }
@@ -127,10 +141,11 @@ module.exports.paymentFail = async (req, res, next) => {
      * If payment failed
      */
 
-    return res.status(200).json({
-      data: req.body,
-      message: "Payment failed",
-    });
+    // return res.status(200).json({
+    //   data: req.body,
+    //   message: "Payment failed",
+    // });
+    return res.status(200).render("success",{ data:req.body, message:"Payment Failed"});
   } catch (error) {
     next(error);
   }
@@ -142,11 +157,17 @@ module.exports.paymentCancel = async (req, res, next) => {
      * If payment cancelled
      */
 
-    return res.status(200).json({
-      data: req.body,
-      message: "Payment cancelled",
-    });
+    // return res.status(200).json({
+    //   data: req.body,
+    //   message: "Payment cancelled",
+    // });
+
+    return res.status(200).render("success",{ data:req.body, message:"Payment cancelled"});
   } catch (error) {
     next(error);
   }
+};
+
+module.exports.test = async (req, res, next) => {
+  return res.status(200).render("success",{});
 };
