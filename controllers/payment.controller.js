@@ -77,7 +77,10 @@ module.exports.initiatePayment = async (req, res, next) => {
         // return res.status(400).json({
         //   message: "Session was not successful",
         // });
-        return res.status(200).render("success",{ payment_data:req.body, message:"Session Was not Successfull"});
+        return res.status(200).render("success", {
+          payment_data: req.body,
+          message: "Session Was not Successfull",
+        });
       }
     });
   } catch (error) {
@@ -109,27 +112,28 @@ module.exports.paymentSuccess = async (req, res, next) => {
     const db = getDb();
     const p_date = new Date().toISOString();
     const query = { _id: ObjectId(valid[1]) };
-    await db
-      .collection("orders")
-      .updateOne(
-        query,
-        {
-          $set: {
-            payment: "pending",
-            transaction_id: valid[0],
-            payment_date: p_date,
-          },
+    await db.collection("orders").updateOne(
+      query,
+      {
+        $set: {
+          payment: "pending",
+          transaction_id: valid[0],
+          payment_date: p_date,
         },
-        { upsert: true }
-      );
+      },
+      { upsert: true }
+    );
     // console.log(valid[1]);
-    const newData = {...req.body,tran_id:valid[0]}
+    const newData = { ...req.body, tran_id: valid[0] };
     // return res.status(200).json({
     //   data: { ...req.body, tran_id: valid[0] },
     //   message: "Payment successfull",
     // });
     // console.log("payemnet success",newData)
-    return res.status(200).render("success",{ payment_data:newData, message:"Your Payment is Successfull"});
+    return res.status(200).render("success", {
+      payment_data: newData,
+      message: "Your Payment is Successfull",
+    });
   } catch (error) {
     next(error);
   }
@@ -145,7 +149,9 @@ module.exports.paymentFail = async (req, res, next) => {
     //   data: req.body,
     //   message: "Payment failed",
     // });
-    return res.status(200).render("success",{ data:req.body, message:"Payment Failed"});
+    return res
+      .status(200)
+      .render("success", { data: req.body, message: "Payment Failed" });
   } catch (error) {
     next(error);
   }
@@ -162,12 +168,32 @@ module.exports.paymentCancel = async (req, res, next) => {
     //   message: "Payment cancelled",
     // });
 
-    return res.status(200).render("success",{ data:req.body, message:"Payment cancelled"});
+    return res
+      .status(200)
+      .render("success", { data: req.body, message: "Payment cancelled" });
   } catch (error) {
     next(error);
   }
 };
 
 module.exports.test = async (req, res, next) => {
-  return res.status(200).render("success",{});
+  return res.status(200).render("success", {});
+};
+
+module.exports.verifyPaymentByAdmin = async (req, res, next) => {
+  try {
+    const orderId = req.body.order_id;
+    console.log("verifying", orderId);
+    const db = getDb();
+    const query = { _id: ObjectId(orderId) };
+    await db.collection("orders").updateOne(query, {
+      $set: {
+        payment: "paid",
+      },
+    });
+
+    res.status(200).json({ success: true, message: "Payment Verified" });
+  } catch (error) {
+    next(error);
+  }
 };

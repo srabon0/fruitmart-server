@@ -53,3 +53,22 @@ module.exports.placeAnOrder = async(req,res,next)=>{
       next(error);
     }
   };
+
+  
+module.exports.verifyShipmentByAdmin = async (req, res, next) => {
+  try {
+    const orderId = req.body.order_id;
+    console.log("verifying", orderId);
+    const db = getDb();
+    const query = { _id: ObjectId(orderId) };
+    await db.collection("orders").updateOne(query, {
+      $set: {
+        shipment_status: "delivered",
+      },
+    });
+
+    res.status(200).json({ success: true, message: "Order Send For Delivery" });
+  } catch (error) {
+    next(error);
+  }
+};

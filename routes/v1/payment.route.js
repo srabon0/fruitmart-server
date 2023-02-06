@@ -21,5 +21,8 @@ router.route("/ssl-payment-fail")
 router.route("/ssl-payment-cancel")
 .post(paymentController.paymentCancel)
 
+router.route("/verify")
+.post(paymentController.verifyPaymentByAdmin)
+
 router.route("/ejs")
 .get(paymentController.test)

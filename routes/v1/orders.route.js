@@ -12,4 +12,7 @@ router.route("/userwise/:email")
 router.route("/place-order") 
 .post(verifyJWT,orderController.placeAnOrder)
 
+router.route("/confirm-shipping") 
+.post(orderController.verifyShipmentByAdmin)
+
   module.exports = router;
