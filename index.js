@@ -3,7 +3,6 @@ const cors = require("cors");
 const port = process.env.PORT || 5000;
 require("dotenv").config();
 const app = express();
-app.use(cors({ origin:'https://fruit-mart-client.vercel.app/' , credentials :  true}));
 app.use(express.urlencoded({extended:false}));
 app.use(express.json({limit: '100mb'}));
 app.set('view engine', 'ejs');
